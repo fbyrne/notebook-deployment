@@ -1,0 +1,55 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notebook-api
+spec:
+  selector:
+    app: notebook-api
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: notebook-api-application-properties
+data:
+  mongo.properties: |
+    spring.data.mongodb.host=mongo
+    spring.data.mongodb.port=27017
+    spring.data.mongodb.database=notebook
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notebook-api
+  labels:
+    app: notebook-api
+spec:
+  selector:
+    matchLabels:
+      app: notebook-api
+  template:
+    metadata:
+      labels:
+        app: nnotebook-api
+    spec:
+      containers:
+        - name: notebook-api
+          image: notebook/noteservice
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: application-config
+              mountPath: "/workspace/config/"
+              readOnly: true
+      volumes:
+        - name: application-config
+          configMap:
+            name: notebook-api-application-properties
+            items:
+              - key: mongo.properties
+                path: application.properties
