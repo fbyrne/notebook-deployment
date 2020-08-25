@@ -3,10 +3,21 @@ kind: Kustomization
 
 namespace: notebook-dev
 
-nameSuffix: -dev
-
 commonLabels:
   deployment: dev
 
 resources:
 - ../../base
+
+patches:
+  - path: set-imagepullpolicy-patch.yaml
+    target:
+      kind: Deployment
+
+# patchesJson6902:
+# - target:
+#     group: networking.istio.io
+#     version: v1alpha3
+#     kind: Gateway
+#     name: notebook-gateway
+#   path: set-gatewayhost-patch.yaml

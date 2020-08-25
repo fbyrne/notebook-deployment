@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth
+spec:
+  selector:
+    app: oauth
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: oauth
+spec:
+  serviceName: oauth
+  selector:
+    matchLabels:
+      app: oauth
+  template:
+    metadata:
+      labels:
+        app: oauth
+    spec:
+      containers:
+        - name: keycloak
+          image: jboss/keycloak:11.0.1
+          env:
+            - name: KEYCLOAK_USER
+              value: admin
+            - name: KEYCLOAK_PASSWORD
+              value: admin
+            - name: PROXY_ADDRESS_FORWARDING
+              value: "true"
+            - name: KEYCLOAK_IMPORT
+              value: /tmp/notebook-realm.json
+          args: ["-c", "standalone.xml"]
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: notebook-realm-config-vol
+              mountPath: "/tmp/"
+              readOnly: true
+      volumes:
+        - name: notebook-realm-config-vol
+          configMap:
+            name: notebook-realm-config
+            items:
+              - key: notebook-realm.json
+                path: notebook-realm.json

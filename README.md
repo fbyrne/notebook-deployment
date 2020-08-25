@@ -41,11 +41,34 @@ $ skaffold dev
 To deploy for development purposes:
 
 ```shell script
+$ kubectl create namespace notebook-dev
 $ skaffold deploy
 ```
 
 To deploy for staging:
 
 ```shell script
+$ kubectl create namespace notebook-staging
 $ skaffold deploy --profile=staging
+```
+
+To deploy for production:
+
+```shell script
+$ kubectl create namespace notebook-prod
+$ skaffold deploy --profile=prod
+```
+
+## Deleting a deployment
+```shell script
+$ skaffold delete --profile=dev
+$ skaffold delete --profile=staging
+$ skaffold delete --profile=prod
+```
+
+## Istio
+
+```shell script
+$ kubectl label namespace notebook-dev istio-injection=enabled
+
 ```

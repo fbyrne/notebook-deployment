@@ -1,15 +1,4 @@
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mongo-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 256Mi
----
-apiVersion: v1
 kind: Service
 metadata:
   name: mongo
@@ -19,6 +8,17 @@ spec:
   ports:
     - port: 27017
       targetPort: 27017
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -46,64 +46,3 @@ spec:
         - name: storage
           persistentVolumeClaim:
             claimName: mongo-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: note-service
-  labels:
-    app: note-service
-    tier: backend
-spec:
-  type: LoadBalancer
-  selector:
-    app: note-service
-  ports:
-    - name: api
-      port: 80
-      targetPort: 8080
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: note-service-application-properties
-data:
-  mongo.properties: |
-    spring.data.mongodb.host=mongo
-    spring.data.mongodb.port=27017
-    spring.data.mongodb.database=note
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: note-service-deployment
-  labels:
-    app: note-service
-    tier: backend
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: note-service
-  template:
-    metadata:
-      labels:
-        app: note-service
-    spec:
-      containers:
-        - name: note-service
-          image: noteservice:latest
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 8080
-          volumeMounts:
-            - name: application-config
-              mountPath: "/workspace/config/"
-              readOnly: true
-      volumes:
-        - name: application-config
-          configMap:
-            name: note-service-application-properties
-            items:
-              - key: mongo.properties
-                path: application.properties

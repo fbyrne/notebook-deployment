@@ -7,13 +7,19 @@ deploy:
     paths:
     - overlays/dev
 profiles:
-- name: prod
+- name: dev
   deploy:
     kustomize:
       paths:
-      - overlays/prod
+      - overlays/dev
 - name: staging
   deploy:
     kustomize:
       paths:
       - overlays/staging
+- name: prod
+  deploy:
+    kustomize:
+      paths:
+      - overlays/prod
+
