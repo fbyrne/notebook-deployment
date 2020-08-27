@@ -3,10 +3,12 @@ kind: Kustomization
 
 resources:
 - notebook-ingress.yaml
+- notebook-rabbitmq.yaml
+- notebook-smtp.yaml
 - notebook-mongo.yaml
 - notebook-oauth.yaml
-- notebook-rabbitmq.yaml
 - notebook-service.yaml
+- notebook-email.yaml
 - notebook-app.yaml
 
 configMapGenerator:
@@ -16,4 +18,7 @@ configMapGenerator:
   - name: notes-application-properties
     files:
       - notes-application.properties
+  - name: email-service-properties
+    files:
+      - email-service.properties
 

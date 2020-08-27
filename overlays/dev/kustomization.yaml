@@ -21,7 +21,13 @@ patchesJson6902:
     group: apps
     version: v1
     kind: Deployment
-    name: notes.*
+    name: notes-app
+- path: all-set-imagepullpolicy-patch.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: email
 - path: ingress-sethost-patch.yaml
   target:
     group: networking.k8s.io
