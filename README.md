@@ -26,12 +26,13 @@ The service code is located in the following repositories:
 - [notebook/email-service](https://github.com/fbyrne/notebook-email-service)
 - [notebook/note-app](https://github.com/fbyrne/notebook-notes-app)
 
-
 ## Deployment Design
 
 It is designed to use [kustomize](https://kubernetes-sigs.github.io/kustomize/) to deploy multiple configuration from the same base kubernetes resource manifests.
 
-## Installing [kustomize](https://kubernetes-sigs.github.io/kustomize/)
+## Installing Required Tools
+
+### Installing [kustomize](https://kubernetes-sigs.github.io/kustomize/)
 
 Installation instructions can be found @ https://kubernetes-sigs.github.io/kustomize/installation.
 
@@ -40,6 +41,79 @@ curl -s "https://raw.githubusercontent.com/\
 kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
 sudo install kustomize /usr/local/bin
 ```
+
+### Installing [skaffold](https://skaffold.dev)
+
+Installation instructions can be found @ https://skaffold.dev/docs/install/.
+
+```shell script
+curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
+sudo install skaffold /usr/local/bin/
+```
+
+## Gettings Started with minikube
+
+Here are the steps to start the service:
+
+1. Clone the git repositories
+   ```shell script
+   $ mkdir notebook; cd notebook
+   $ git clone https://github.com/fbyrne/notebook-note-service.git
+   $ git clone https://github.com/fbyrne/notebook-email-service.git
+   $ git clone https://github.com/fbyrne/notebook-notes-app.git
+   $ git clone https://github.com/fbyrne/notebook-deployment.git
+   ```
+1. Start minikube
+   ```shell script
+   $ minikube start
+   $ minikube addons enable ingress
+   $ minikube addons enable dashboard
+   $ sudo minikube tunnel --cleanup
+   ```
+1. Open a new terminal and point docker to minikube
+   ```shell script
+   $ eval $(minikube docker-env)
+   ```
+1. Patch the kubernetes nginx ingress controller config to resolve a problem with keycloak running behind the ingress.
+   ```shell script
+   $ kubectl patch configmap/nginx-load-balancer-conf \
+       -n kube-system \
+       --type merge \
+       -p '{"proxy-buffer-size": "16k"}'
+    ``` 
+1. Build all service code
+   ```shell script
+   $ (cd notebook-note-service && skaffold build)
+   $ (cd notebook-email-service && skaffold build)
+   $ (cd notebook-notes-app && skaffold build)
+   ```
+1. Identify the minikube ingress ip
+   ```shell script
+   $ export NOTEBOOK_INGRESS_DNS="notebook-$(minikube ip | sed 's/\./-/g')-nip.io"
+   ```
+1. At this time, I could not find a way to update the ingress host references via a variable.  So this needs to be replaced with the value of environment variable NOTEBOOK_INGRESS_DNS in:
+   - notes-application.properties
+   - ingress-sethost-patch.yaml
+1. Deploy the services on the cluster.  
+   ```shell script
+   $ (cd notebook-deployment && skaffold run)
+   ```
+   Note if the images fail to pull, repeat point the docker to minikube and rebuild the service code.
+1. Open a browser to `http://$NOTEBOOK_INGRESS_DNS/` and you should be met with a login/register screen.
+1. Register as a user
+1. A JWT token is displayed in the text box on screen.
+1. Use this JWT token in POSTMAN or cURL to issue requests to the API
+   ```shell script
+   $ JWT='ABC.DEF.XYZ'
+   $ curl -i --location --request POST \
+      'http://notebook-172-17-0-2.nip.io/note' \
+      --header 'Authorization: Bearer '"$JWT"'' \
+      --header 'Content-Type: application/json' \
+      --data-raw '{ "content": "My first note" }'
+   ```
+1. The result should be a 201 Created.  
+1. If you get a 401 Unauthorized, reload the app web page `http://$NOTEBOOK_INGRESS_DNS/` and update the token variable.
+
 
 ## Structure
 
@@ -52,7 +126,7 @@ The overlays folder contains a folder for each deployment types that are defined
 Using kustomize many different types of deployments (dev, staging, prod) can be managed for a common set of kubernetes resources.  The deployments are deployed to the cluster using `kubectl` as follows:
 
 ```shell script
-kustomize build ./overlays/dev | kubectl apply -n notebook-dev -f -
+kustomize build ./overlays/dev | kubectl apply -f -
 ```
 
 ### Deploying to a kubernetes cluster using [Skaffold](https://skaffold.dev/)
