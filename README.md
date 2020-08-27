@@ -11,11 +11,11 @@ The application has the following key points:
 1. Identity Authoriation Management (IAM) using an OAuth 2.0 service, in this case keycloak.
 1. An Rest API implmented using Spring Boot, Security, WebFlux.
 1. A MongoDB store to persist user notes.
-1. An AMQP compatible messaging service, in this base RabbitMQ.
+1. An AMQP compatible messaging service, in this case RabbitMQ.
    - An exchange `notes` with bindings to the following queues is used:
-     - `notes-event-created`
-     - `notes-event-updated`
-     - `notes-event-deleted`
+     - [`notes.event.created`] -> [`notes-event-created`]
+     - [`notes.event.updated`] -> [`notes-event-updated`]
+     - [`notes.event.deleted`] -> [`notes-event-deleted`]
 1. A backend email service to listen and notify users of updates.
 1. A frontend SPWA implemented using Reactjs
 
@@ -28,7 +28,7 @@ The service code is located in the following repositories:
 
 ## Deployment Design
 
-It is designed to use [kustomize](https://kubernetes-sigs.github.io/kustomize/) to deploy multiple configuration from the same base kubernetes resource manifests.
+The deployment is designed to use [kustomize](https://kubernetes-sigs.github.io/kustomize/) to deploy multiple configuration from the same base kubernetes resource manifests.
 
 ## Installing Required Tools
 
