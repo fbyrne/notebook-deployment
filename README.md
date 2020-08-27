@@ -12,10 +12,19 @@ The application has the following key points:
 1. An Rest API implmented using Spring Boot, Security, WebFlux.
 1. A MongoDB store to persist user notes.
 1. An AMQP compatible messaging service, in this base RabbitMQ.
+   - An exchange `notes` with bindings to the following queues is used:
+     - `notes-event-created`
+     - `notes-event-updated`
+     - `notes-event-deleted`
 1. A backend email service to listen and notify users of updates.
 1. A frontend SPWA implemented using Reactjs
 
 Please note, the front end is a work in progress and currently only provides authentication and displays the users JWT token.
+
+The service code is located in the following repositories:
+- [notebook/note-service](https://github.com/fbyrne/notebook-note-service)
+- [notebook/email-service](https://github.com/fbyrne/notebook-email-service)
+- [notebook/note-app](https://github.com/fbyrne/notebook-notes-app)
 
 
 ## Deployment Design
