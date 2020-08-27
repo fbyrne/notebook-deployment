@@ -32,8 +32,6 @@ spec:
               value: admin
             - name: KEYCLOAK_PASSWORD
               value: admin
-            - name: PROXY_ADDRESS_FORWARDING
-              value: "true"
             - name: KEYCLOAK_IMPORT
               value: /tmp/notebook-realm.json
           args: ["-c", "standalone.xml"]

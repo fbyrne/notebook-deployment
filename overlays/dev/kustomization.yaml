@@ -9,15 +9,22 @@ commonLabels:
 resources:
 - ../../base
 
-patches:
-  - path: set-imagepullpolicy-patch.yaml
-    target:
-      kind: Deployment
-
-# patchesJson6902:
-# - target:
-#     group: networking.istio.io
-#     version: v1alpha3
-#     kind: Gateway
-#     name: notebook-gateway
-#   path: set-gatewayhost-patch.yaml
+patchesJson6902:
+- path: all-set-imagepullpolicy-patch.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: notes
+- path: all-set-imagepullpolicy-patch.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: notes.*
+- path: ingress-sethost-patch.yaml
+  target:
+    group: networking.k8s.io
+    version: v1beta1
+    kind: Ingress
+    name: notebook-ingress

@@ -1,9 +1,0 @@
-kind: Deployment
-metadata:
-  name: notes
-spec:
-  template:
-    spec:
-      containers:
-        - name: notes
-          imagePullPolicy: IfNotPresent
