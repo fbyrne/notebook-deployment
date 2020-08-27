@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email
+  labels:
+    app: email
+spec:
+  selector:
+    matchLabels:
+      app: email
+  template:
+    metadata:
+      labels:
+        app: email
+    spec:
+      containers:
+        - name: email
+          image: notebook/email-service
+          volumeMounts:
+            - name: application-config
+              mountPath: "/workspace/config/"
+              readOnly: true
+      volumes:
+        - name: application-config
+          configMap:
+            name: email-service-properties
+            items:
+              - key: email-service.properties
+                path: application.properties
