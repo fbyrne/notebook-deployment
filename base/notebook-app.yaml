@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes-app
+spec:
+  selector:
+    app: notes-app
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app
+  labels:
+    app: notes-app
+spec:
+  selector:
+    matchLabels:
+      app: notes-app
+  template:
+    metadata:
+      labels:
+        app: notes-app
+    spec:
+      containers:
+        - name: notes-app
+          image: notebook/note-app
+          ports:
+            - containerPort: 80
+          

@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: notes
+spec:
+  selector:
+    app: notes
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes
+  labels:
+    app: notes
+spec:
+  selector:
+    matchLabels:
+      app: notes
+  template:
+    metadata:
+      labels:
+        app: notes
+    spec:
+      containers:
+        - name: notes
+          image: notebook/note-service
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: application-config
+              mountPath: "/workspace/config/"
+              readOnly: true
+      volumes:
+        - name: application-config
+          configMap:
+            name: notes-application-properties
+            items:
+              - key: notes-application.properties
+                path: application.properties
