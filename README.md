@@ -102,17 +102,22 @@ Here are the steps to start the service:
 1. Open a browser to `http://$NOTEBOOK_INGRESS_DNS/` and you should be met with a login/register screen.
 1. Register as a user
 1. A JWT token is displayed in the text box on screen.
+1. Once a user has been created you can login from the command-line using
+   ```shell script
+   $ JWT=$(curl -s -d "client_id=notebook-frontend" -d "username=<user>" -d "password=<plain-password>" -d "grant_type=password" "http://$NOTEBOOK_INGRESS_DNS/auth/realms/notebook/protocol/openid-connect/token" | jq -r .access_token)
+   ```
 1. Use this JWT token in POSTMAN or cURL to issue requests to the API
    ```shell script
    $ JWT='ABC.DEF.XYZ'
    $ curl -i --location --request POST \
-      'http://notebook-172-17-0-2.nip.io/note' \
+      "http://$NOTEBOOK_INGRESS_DNS/note" \
       --header 'Authorization: Bearer '"$JWT"'' \
       --header 'Content-Type: application/json' \
       --data-raw '{ "content": "My first note" }'
    ```
 1. The result should be a 201 Created.  
-1. If you get a 401 Unauthorized, reload the app web page `http://$NOTEBOOK_INGRESS_DNS/` and update the token variable.
+1. If you get a 401 Unauthorized, check the response `WWW-Authenticate` header for details.
+   - Usually the token has expired and needs to be refreshed.
 
 
 ## Structure
