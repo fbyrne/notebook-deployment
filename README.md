@@ -92,8 +92,9 @@ Here are the steps to start the service:
    $ export NOTEBOOK_INGRESS_DNS="notebook-$(minikube ip | sed 's/\./-/g')-nip.io"
    ```
 1. At this time, I could not find a way to update the ingress host references via a variable.  So this needs to be replaced with the value of environment variable NOTEBOOK_INGRESS_DNS in:
-   - notes-application.properties
-   - ingress-sethost-patch.yaml
+   - base/notes-application.properties
+   - overlays/dev/ingress-sethost-patch.yaml
+   - overlays/dev/notes-app-keycloak.json
 1. Deploy the services on the cluster.  
    ```shell script
    $ (cd notebook-deployment && skaffold run)

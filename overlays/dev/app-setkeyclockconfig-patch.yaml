@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notes-app
+spec:
+  template:
+    spec:
+      containers:
+        - name: notes-app
+          volumeMounts:
+            - name: keycloak-config
+              mountPath: "/app/public/keycloak.json"
+              subPath: keycloak.json
+              readOnly: true
+      volumes:
+        - name: keycloak-config
+          configMap:
+            name: app-keycloak-config
+            items:
+              - key: notes-app-keycloak.json
+                path: keycloak.json

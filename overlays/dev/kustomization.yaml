@@ -9,20 +9,33 @@ commonLabels:
 resources:
 - ../../base
 
+configMapGenerator:
+  - name: app-keycloak-config
+    files:
+      - notes-app-keycloak.json
+
+patches:
+  - path: app-setkeyclockconfig-patch.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: notes-app
+
 patchesJson6902:
-- path: all-set-imagepullpolicy-patch.yaml
+- path: all-setimagepullpolicy-patch.yaml
   target:
     group: apps
     version: v1
     kind: Deployment
     name: notes
-- path: all-set-imagepullpolicy-patch.yaml
+- path: all-setimagepullpolicy-patch.yaml
   target:
     group: apps
     version: v1
     kind: Deployment
     name: notes-app
-- path: all-set-imagepullpolicy-patch.yaml
+- path: all-setimagepullpolicy-patch.yaml
   target:
     group: apps
     version: v1
@@ -34,3 +47,4 @@ patchesJson6902:
     version: v1beta1
     kind: Ingress
     name: notebook-ingress
+
