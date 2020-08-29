@@ -29,11 +29,24 @@ spec:
         - name: notes
           image: notebook/note-service
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
           volumeMounts:
             - name: application-config
               mountPath: "/workspace/config/"
               readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
       volumes:
         - name: application-config
           configMap:

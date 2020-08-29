@@ -89,7 +89,7 @@ Here are the steps to start the service:
    ```
 1. Identify the minikube ingress ip
    ```shell script
-   $ export NOTEBOOK_INGRESS_DNS="notebook-$(minikube ip | sed 's/\./-/g')-nip.io"
+   $ export NOTEBOOK_INGRESS_DNS="notebook-$(minikube ip | sed 's/\./-/g').nip.io"
    ```
 1. At this time, I could not find a way to update the ingress host references via a variable.  So this needs to be replaced with the value of environment variable NOTEBOOK_INGRESS_DNS in:
    - base/notes-application.properties
@@ -105,20 +105,44 @@ Here are the steps to start the service:
 1. A JWT token is displayed in the text box on screen.
 1. Once a user has been created you can login from the command-line using
    ```shell script
-   $ JWT=$(curl -s -d "client_id=notebook-frontend" -d "username=<user>" -d "password=<plain-password>" -d "grant_type=password" "http://$NOTEBOOK_INGRESS_DNS/auth/realms/notebook/protocol/openid-connect/token" | jq -r .access_token)
+   $ JWT=$(curl -s "http://$NOTEBOOK_INGRESS_DNS/auth/realms/notebook/protocol/openid-connect/token" \
+              -d "client_id=notebook-frontend" \
+              -d "username=<user>" -d "password=<plain-password>" \
+              -d "grant_type=password"  | jq -r .access_token)
    ```
 1. Use this JWT token in POSTMAN or cURL to issue requests to the API
    ```shell script
    $ JWT='ABC.DEF.XYZ'
-   $ curl -i --location --request POST \
-      "http://$NOTEBOOK_INGRESS_DNS/note" \
+   $ curl -i --request POST \
+      --location "http://$NOTEBOOK_INGRESS_DNS/note" \
       --header 'Authorization: Bearer '"$JWT"'' \
       --header 'Content-Type: application/json' \
-      --data-raw '{ "content": "My first note" }'
+      --data-raw '{"id":"{noteId}","version":1,"content":"My first note"}'
    ```
-1. The result should be a 201 Created.  
+1. The result should be a 201 Created. The location header returns the path to the created resource.
 1. If you get a 401 Unauthorized, check the response `WWW-Authenticate` header for details.
    - Usually the token has expired and needs to be refreshed.
+1. Note can be retrieved using the following curl command:
+   ```shell script
+   $ curl -s --request GET \
+      --location "http://$NOTEBOOK_INGRESS_DNS/note/{noteId}" \
+      --header 'Authorization: Bearer '"$JWT"'' \
+      --header 'Accept: application/json' | jq 
+   ```
+1. Note can be updated using the following curl command:
+   ```shell script
+   $ curl -s --request PUT \
+      --location "http://$NOTEBOOK_INGRESS_DNS/note/{noteId}" \
+      --header 'Authorization: Bearer '"$JWT"'' \
+      --header 'Accept: application/json' \
+      --data-raw '{ "version": 1, content": "My updated note" }'
+   ```
+1. Note can be deleted using the following curl command:
+   ```shell script
+   $ curl -s --request DELETE \
+      --location "http://$NOTEBOOK_INGRESS_DNS/note/{noteId}" \
+      --header 'Authorization: Bearer '"$JWT"''
+   ```
 
 
 ## Structure
