@@ -11,3 +11,12 @@ commonLabels:
 
 resources:
 - ../../base
+
+# lock down staging images
+images:
+  - name: notebook/note-service
+    newTag: staging-head
+  - name: notebook/email-service
+    newTag: staging-head
+  - name: notebook/note-app
+    newTag: staging-head
