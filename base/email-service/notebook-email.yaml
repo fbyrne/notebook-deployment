@@ -23,7 +23,7 @@ spec:
       volumes:
         - name: application-config
           configMap:
-            name: email-service-properties
+            name: email-application-properties
             items:
-              - key: email-service.properties
+              - key: application.properties
                 path: application.properties

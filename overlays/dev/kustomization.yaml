@@ -9,18 +9,18 @@ commonLabels:
 resources:
 - ../../base
 
-configMapGenerator:
-  - name: app-keycloak-config
-    files:
-      - notes-app-keycloak.json
+# configMapGenerator:
+#   - name: app-keycloak-config
+#     files:
+#       - notes-app-keycloak.json
 
-patches:
-  - path: app-setkeyclockconfig-patch.yaml
-    target:
-      group: apps
-      version: v1
-      kind: Deployment
-      name: notes-app
+# patches:
+#   - path: app-setkeyclockconfig-patch.yaml
+#     target:
+#       group: apps
+#       version: v1
+#       kind: Deployment
+#       name: notes-app
 
 patchesJson6902:
 - path: all-setimagepullpolicy-patch.yaml

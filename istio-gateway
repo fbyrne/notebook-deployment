@@ -1,0 +1,12 @@
+#!/bin/sh
+
+export INGRESS_HOST=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+export INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].port}')
+export SECURE_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].port}')
+export TCP_INGRESS_PORT=$(kubectl -n istio-system get service istio-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="tcp")].port}')
+
+export GATEWAY_IP=$INGRESS_HOST:$INGRESS_PORT
+export GATEWAY_DNS=$1-$(echo $INGRESS_HOST | sed 's/\./-/g').nip.io:$INGRESS_PORT
+
+echo "Connect by dns on GATEWAY_DNS=http://$GATEWAY_DNS"
+echo "Connect by ip on GATEWAY_IP=http://$GATEWAY_IP"

@@ -6,7 +6,7 @@ spec:
   selector:
     app: notes
   ports:
-  - name: http
+  - name: http-api
     port: 80
     targetPort: 8080
 ---
@@ -24,33 +24,39 @@ spec:
     metadata:
       labels:
         app: notes
+        sidecar.istio.io/logLevel: "debug"
     spec:
       containers:
         - name: notes
           image: notebook/note-service
           ports:
-            - name: http
+            - name: http-api
               containerPort: 8080
           volumeMounts:
             - name: application-config
               mountPath: "/workspace/config/"
               readOnly: true
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 30"]
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
-              port: http
-            initialDelaySeconds: 15
+              port: http-api
+            initialDelaySeconds: 5
             periodSeconds: 15
           livenessProbe:
             httpGet:
               path: /actuator/health/liveness
-              port: http
+              port: http-api
             initialDelaySeconds: 15
             periodSeconds: 15
+          
       volumes:
         - name: application-config
           configMap:
             name: notes-application-properties
             items:
-              - key: notes-application.properties
+              - key: application.properties
                 path: application.properties

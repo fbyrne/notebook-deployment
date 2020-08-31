@@ -6,12 +6,8 @@ spec:
   selector:
     app: rabbitmq
   ports:
-    - name: amqp
+    - name: tcp-amqp
       port: 5672
-      targetPort: 5672
-    - name: management
-      port: 15672
-      targetPort: 15672
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -29,12 +25,12 @@ spec:
     spec:
       containers:
         - name: rabbitmq
-          image: rabbitmq:3.8.7-management
+          image: rabbitmq:3.8.7
           env:
             - name: RABBITMQ_DEFAULT_USER
               value: admin
             - name: RABBITMQ_DEFAULT_PASS
               value: secret
           ports:
-            - containerPort: 5672
-            - containerPort: 15672
+            - name: tcp-amqp
+              containerPort: 5672

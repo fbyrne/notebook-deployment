@@ -117,7 +117,7 @@ Here are the steps to start the service:
       --location "http://$NOTEBOOK_INGRESS_DNS/note" \
       --header 'Authorization: Bearer '"$JWT"'' \
       --header 'Content-Type: application/json' \
-      --data-raw '{"id":"{noteId}","version":1,"content":"My first note"}'
+      --data-raw '{"content":"My first note"}'
    ```
 1. The result should be a 201 Created. The location header returns the path to the created resource.
 1. If you get a 401 Unauthorized, check the response `WWW-Authenticate` header for details.

@@ -6,7 +6,7 @@ spec:
   selector:
     app: oauth
   ports:
-    - name: http
+    - name: http-web
       port: 80
       targetPort: 8080
 ---
@@ -32,11 +32,22 @@ spec:
               value: admin
             - name: KEYCLOAK_PASSWORD
               value: admin
+            - name: PROXY_ADDRESS_FORWARDING
+              value: "true"
+            - name: BIND
+              value: "0.0.0.0"
             - name: KEYCLOAK_IMPORT
               value: /tmp/notebook-realm.json
-          args: ["-c", "standalone.xml"]
+          args: ["-b", "0.0.0.0", "-c", "standalone.xml"]
           ports:
-            - containerPort: 8080
+            - name: http-web
+              containerPort: 8080
+            - name: https-web
+              containerPort: 8443
+          startupProbe:
+            initialDelaySeconds: 20
+            exec:
+              command: ["curl", "-f", "http://localhost:9990/health"]
           volumeMounts:
             - name: notebook-realm-config-vol
               mountPath: "/tmp/"

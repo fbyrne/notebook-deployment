@@ -7,17 +7,11 @@ resources:
 - notebook-smtp.yaml
 - notebook-mongo.yaml
 - notebook-oauth.yaml
-- notebook-service.yaml
-- notebook-email.yaml
+- note-service
+- email-service
 - notebook-app.yaml
 
 configMapGenerator:
   - name: notebook-realm-config
     files:
     - notebook-realm.json
-  - name: notes-application-properties
-    files:
-      - notes-application.properties
-  - name: email-service-properties
-    files:
-      - email-service.properties

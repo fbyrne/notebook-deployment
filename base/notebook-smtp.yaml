@@ -6,9 +6,8 @@ spec:
   selector:
     app: smtp
   ports:
-  - name: smtp
+  - name: tcp-smtp
     port: 25
-    targetPort: 25
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -29,4 +28,5 @@ spec:
         - name: smtp
           image: namshi/smtp
           ports:
-            - containerPort: 25
+            - name: tcp-smtp
+              containerPort: 25

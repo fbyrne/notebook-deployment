@@ -1,0 +1,8 @@
+#!/bin/sh
+
+SKAFFOLD_OPTION="$1"
+shift
+
+
+eval $(minikube docker-env)
+skaffold -n notebook-staging "$SKAFFOLD_OPTION" -p staging "$@"
