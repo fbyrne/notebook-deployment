@@ -7,9 +7,10 @@ resources:
 - notebook-smtp.yaml
 - notebook-mongo.yaml
 - notebook-oauth.yaml
-- note-service
 - email-service
+- note-service
 - notebook-app.yaml
+- istio
 
 configMapGenerator:
   - name: notebook-realm-config
