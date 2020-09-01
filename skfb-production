@@ -1,0 +1,12 @@
+#!/bin/sh
+
+SKAFFOLD_OPTION="$1"
+shift
+
+eval $(minikube docker-env)
+
+( cd ../notebook-email-service; git checkout production; skaffold build --profile=production )
+( cd ../notebook-note-service; git checkout production; skaffold build --profile=production )
+( cd ../notebook-notes-app; git checkout production; skaffold build --profile=production )
+
+skaffold --namespace notebook-prod "$SKAFFOLD_OPTION" -p production "$@"

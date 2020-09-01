@@ -3,10 +3,8 @@ kind: Kustomization
 
 namespace: notebook-prod
 
-nameSuffix: -prod
-
 commonLabels:
-  deployment: prod
+  deployment: production
 
 resources:
   - ../../base
