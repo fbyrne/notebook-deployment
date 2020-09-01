@@ -3,10 +3,17 @@ kind: Kustomization
 
 namespace: notebook-prod
 
-nameSuffix: -prod
-
 commonLabels:
-  deployment: prod
+  deployment: production
 
 resources:
   - ../../base
+
+# lock down production images
+images:
+  - name: notebook/note-service
+    newTag: production-head
+  - name: notebook/email-service
+    newTag: production-head
+  - name: notebook/note-app
+    newTag: production-head

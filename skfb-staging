@@ -1,0 +1,18 @@
+#!/bin/sh
+
+SKAFFOLD_OPTION="$1"
+shift
+
+DEPLOYMENT_TYPE=staging
+
+eval $(minikube docker-env)
+
+skf_build(){
+    ( cd $1; git checkout ${DEPLOYMENT_TYPE}; skaffold build --profile=${DEPLOYMENT_TYPE} )
+}
+
+skf_build "../notebook-email-service"
+skf_build "../notebook-note-service"
+skf_build "../notebook-notes-app"
+
+skaffold --namespace notebook-prod "$SKAFFOLD_OPTION" -p production "$@"

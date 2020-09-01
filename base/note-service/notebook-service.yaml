@@ -24,7 +24,6 @@ spec:
     metadata:
       labels:
         app: notes
-        sidecar.istio.io/logLevel: "debug"
     spec:
       containers:
         - name: notes
