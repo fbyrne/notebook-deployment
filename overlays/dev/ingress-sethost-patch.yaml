@@ -1,3 +1,3 @@
 - op: replace
   path: /spec/rules/0/host
-  value: notebook-172-17-0-2.nip.io
+  value: notebook-192-168-58-2.nip.io

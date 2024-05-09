@@ -8,7 +8,7 @@ spec:
   ports:
     - name: http-web
       port: 80
-      targetPort: 8080
+      targetPort: http-web
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: jboss/keycloak:11.0.1
+          image: quay.io/keycloak/keycloak:11.0.1
           env:
             - name: KEYCLOAK_USER
               value: admin

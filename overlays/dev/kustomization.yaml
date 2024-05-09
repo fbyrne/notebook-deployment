@@ -44,7 +44,7 @@ patchesJson6902:
 - path: ingress-sethost-patch.yaml
   target:
     group: networking.k8s.io
-    version: v1beta1
+    version: v1
     kind: Ingress
     name: notebook-ingress
 

@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: notebook-ingress
@@ -8,14 +8,23 @@ spec:
     http:
       paths:
       - path: /auth
+        pathType: Prefix
         backend:
-          serviceName: oauth
-          servicePort: 80
+          service:
+            name: oauth
+            port:
+              name: http-web
       - path: /note
+        pathType: Prefix
         backend:
-          serviceName: notes
-          servicePort: 80
+          service:
+            name: notes
+            port:
+              number: 80
       - path: /
+        pathType: Prefix
         backend:
-            serviceName: notes-app
-            servicePort: 80
+          service:
+            name: notes-app
+            port:
+              number: 80

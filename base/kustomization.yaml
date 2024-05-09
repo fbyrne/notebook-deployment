@@ -10,7 +10,7 @@ resources:
 - email-service
 - note-service
 - notebook-app.yaml
-- istio
+# - istio
 
 configMapGenerator:
   - name: notebook-realm-config

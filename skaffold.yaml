@@ -3,22 +3,22 @@ kind: Config
 metadata:
   name: notebook-deployment
 deploy:
-    kustomize:
-      paths:
+  kustomize:
+    paths:
       - overlays/dev
 profiles:
-- name: staging
-  deploy:
-    kustomize:
-      paths:
-      - overlays/staging
-- name: production
-  deploy:
-    kustomize:
-      paths:
-      - overlays/prod
-- name: istio
-  patches:
-    - op: add
-      path: /deploy/kustomize/paths/-
-      value: overlays/istio
+  - name: staging
+    deploy:
+      kustomize:
+        paths:
+          - overlays/staging
+  - name: production
+    deploy:
+      kustomize:
+        paths:
+          - overlays/prod
+  - name: istio
+    patches:
+      - op: add
+        path: /deploy/kustomize/paths/-
+        value: overlays/istio
