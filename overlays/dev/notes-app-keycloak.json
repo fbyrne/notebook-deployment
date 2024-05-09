@@ -1,6 +1,6 @@
 {
   "realm": "notebook",
-  "auth-server-url": "/auth/",
+  "auth-server-url": "http://notebook-192-168-58-2.nip.io/auth/",
   "ssl-required": "none",
   "resource": "notebook-frontend",
   "public-client": true,
